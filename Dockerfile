@@ -18,7 +18,6 @@ RUN git clone git://github.com/theory/pgtap.git \
     && make install \
     && make clean
 
-# ENV SHAREDIR=$(pg_config --sharedir)
 COPY ./sync.control /sync.control
 RUN mv /sync.control $(pg_config --sharedir)/extension/sync.control
 COPY ./sync--0.1.sql /sync--0.1.sql
