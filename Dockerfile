@@ -18,10 +18,12 @@ RUN git clone git://github.com/theory/pgtap.git \
     && make install \
     && make clean
 
-# install pgtap on postgres database
+# ENV SHAREDIR=$(pg_config --sharedir)
+COPY ./sync.control /sync.control
+RUN mv /sync.control $(pg_config --sharedir)/extension/sync.control
+COPY ./sync--0.1.sql /sync--0.1.sql
+RUN mv /sync--0.1.sql $(pg_config --sharedir)/extension/sync--0.1.sql
+
+# install extensions
 RUN mkdir -p /docker-entrypoint-initdb.d
 COPY ./initdb-pgtap.sql /docker-entrypoint-initdb.d/pgtap.sql
-
-
-# pg_config --sharedir
-# /usr/share/postgresql/9.6/extension/

@@ -1,0 +1,4 @@
+default_version = '0.1'
+encoding = 'UTF-8'
+schema = 'sync'
+relocatable = false
