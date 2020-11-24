@@ -3,14 +3,16 @@
 Extension PostgreSQL pour pouvoir synchroniser des tables entre plusieurs bases de données.
 
 
-## Docker
+## Exécuter les tests avec Docker
 
-	docker build -t pg_sync_test .
-	docker run --name db --rm -d pg_sync_test
-	docker logs -f db
+	docker-compose up --build tests
+	docker-compose down
 
-	docker run -it --rm --link db:postgres -e PGPASSWORD=postgres postgres psql -h db -U postgres
 
-	docker run --rm --link db:postgres -e PGPASSWORD=postgres -v ~/dev/pg_sync/tests/:/tests pg_sync_test pg_prove -h db -U postgres --ext=".sql" /tests
+## TODO
 
-	docker stop db
+- docker-compose + build sublime?
+- créer db_id
+- créer stg_synchro (metadata)
+- créer fct trigger
+- créer colonnes sync

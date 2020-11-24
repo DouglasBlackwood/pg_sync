@@ -1,0 +1,17 @@
+version: "3.6"
+
+services:
+  db:
+    build:
+      context: .
+
+  tests:
+    build:
+      context: .
+    depends_on:
+      - db
+    environment:
+      - PGPASSWORD=postgres
+    volumes:
+      - ./tests:/tests
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; pg_prove -h db -U postgres --ext=".sql" /tests '
