@@ -14,4 +14,4 @@ services:
       - PGPASSWORD=postgres
     volumes:
       - ./tests:/tests
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; pg_prove -h db -U postgres --ext=".sql" /tests '
+    command: bash -c 'sleep 1; while !</dev/tcp/db/5432; do sleep 1; done; pg_prove -h db -U postgres --ext=".sql" /tests '

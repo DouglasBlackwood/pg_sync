@@ -5,14 +5,13 @@ Extension PostgreSQL pour pouvoir synchroniser des tables entre plusieurs bases 
 
 ## Exécuter les tests avec Docker
 
-	docker-compose up --build tests
-	docker-compose down
+	docker-compose up --build tests && docker-compose down
 
 
 ## TODO
 
-- docker-compose + build sublime?
 - créer db_id
+- bloquer insert/delete sur db_id
 - créer stg_synchro (metadata)
 - créer fct trigger
 - créer colonnes sync
