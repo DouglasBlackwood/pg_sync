@@ -3,7 +3,7 @@ BEGIN;
 SELECT plan(1);
 
 -- Run the tests.
-SELECT pass( 'My test passed, w00t!' );
+SELECT has_table('sync', 'db_id', 'table db_id is missing');
 
 -- Finish the tests and clean up.
 SELECT * FROM finish();
