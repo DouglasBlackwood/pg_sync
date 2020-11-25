@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(19);
+SELECT plan(22);
 
 SELECT has_table('sync', 'db_id', 'table db_id is missing');
 
@@ -21,10 +21,13 @@ SELECT col_default_is('sync', 'db_id', 'main', FALSE, 'column db_id.main must ha
 
 SELECT has_function('sync', 'is_main', 'function is_main() is missing');
 SELECT ok(sync.is_main() = FALSE);
+SELECT volatility_is('sync', 'is_main', 'stable', 'function is_main() must be STABLE');
 SELECT has_function('sync', 'is_server', 'function is_server() is missing');
 SELECT ok(sync.is_server() = sync.is_main());
+SELECT volatility_is('sync', 'is_server', 'stable', 'function is_server() must be STABLE');
 SELECT has_function('sync', 'is_replica', 'function is_replica() is missing');
 SELECT ok(sync.is_replica() = TRUE);
+SELECT volatility_is('sync', 'is_replica', 'stable', 'function is_replica() must be STABLE');
 
 SELECT * FROM finish();
 ROLLBACK;
