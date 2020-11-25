@@ -31,7 +31,7 @@ $$
 	SELECT main FROM sync.db_id;
 $$;
 
-COMMENT ON FUNCTION sync.is_main() IS 'Retruns wether this database is the main database';
+COMMENT ON FUNCTION sync.is_main() IS 'Retruns whether this database is the main database';
 
 CREATE OR REPLACE FUNCTION sync.is_server()
 	RETURNS boolean
@@ -42,7 +42,7 @@ $$
 	SELECT main FROM sync.db_id;
 $$;
 
-COMMENT ON FUNCTION sync.is_server() IS 'Retruns wether this database is the main database';
+COMMENT ON FUNCTION sync.is_server() IS 'Retruns whether this database is the main database';
 
 CREATE OR REPLACE FUNCTION sync.is_replica()
 	RETURNS boolean
@@ -53,4 +53,4 @@ $$
 	SELECT NOT main FROM sync.db_id;
 $$;
 
-COMMENT ON FUNCTION sync.is_replica() IS 'Retruns wether this database is a replica';
+COMMENT ON FUNCTION sync.is_replica() IS 'Retruns whether this database is a replica';
