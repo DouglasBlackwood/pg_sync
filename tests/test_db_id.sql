@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(17);
+SELECT plan(19);
 
 SELECT has_table('sync', 'db_id', 'table db_id is missing');
 
@@ -20,9 +20,11 @@ SELECT col_has_default('sync', 'db_id', 'main', 'column db_id.main must have DEF
 SELECT col_default_is('sync', 'db_id', 'main', FALSE, 'column db_id.main must have DEFAULT value to FALSE');
 
 SELECT has_function('sync', 'is_main', 'function is_main() is missing');
-SELECT ok(main = sync.is_main()) FROM sync.db_id;
+SELECT ok(sync.is_main() = FALSE);
 SELECT has_function('sync', 'is_server', 'function is_server() is missing');
-SELECT ok(sync.is_server() = sync.is_main()) FROM sync.db_id;
+SELECT ok(sync.is_server() = sync.is_main());
+SELECT has_function('sync', 'is_replica', 'function is_replica() is missing');
+SELECT ok(sync.is_replica() = TRUE);
 
 SELECT * FROM finish();
 ROLLBACK;

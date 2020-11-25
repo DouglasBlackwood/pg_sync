@@ -34,3 +34,11 @@ AS
 $$
 	SELECT main FROM sync.db_id;
 $$;
+
+CREATE OR REPLACE FUNCTION sync.is_replica()
+	RETURNS boolean
+	LANGUAGE sql
+AS
+$$
+	SELECT NOT main FROM sync.db_id;
+$$;
