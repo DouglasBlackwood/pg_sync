@@ -101,7 +101,11 @@ AS
 $BODY$
 BEGIN
 	IF TG_OP = 'DELETE' THEN
-		RETURN NULL;
+		IF OLD.pgs_is_active IS NULL THEN
+			RETURN OLD;
+		ELSE
+			RETURN NULL;
+		END IF;
 
 	ELSE
 		NEW.pgs_changed_at = statement_timestamp();
