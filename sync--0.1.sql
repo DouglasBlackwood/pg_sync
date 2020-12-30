@@ -58,6 +58,8 @@ CREATE OR REPLACE FUNCTION sync.install_tracer(_table regclass)
 AS
 $BODY$
 BEGIN
+	SET client_min_messages TO WARNING;
+
 	BEGIN
 		EXECUTE FORMAT('ALTER TABLE %I ADD COLUMN pgs_is_active BOOLEAN DEFAULT TRUE;', _table);
 	EXCEPTION WHEN duplicate_column THEN
