@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(15);
+SELECT plan(18);
 
 CREATE TEMP TABLE people
 (
@@ -44,6 +44,9 @@ SELECT ok(pgs_synced_at IS NULL, 'pgs_synced_at must be null') FROM people LIMIT
 DELETE FROM people;
 SELECT ok(COUNT(*) = 5) FROM people;
 SELECT ok(NOT pgs_is_active) FROM people LIMIT 1;
+SELECT ok(pgs_changed_at >= now(), 'wrong pgs_changed_at') FROM people LIMIT 1;
+SELECT ok(pgs_changed_at <= statement_timestamp(), 'wrong pgs_changed_at') FROM people LIMIT 1;
+SELECT ok(pgs_synced_at IS NULL, 'pgs_synced_at must be null') FROM people LIMIT 1;
 
 UPDATE people SET pgs_is_active = NULL;
 DELETE FROM people;
