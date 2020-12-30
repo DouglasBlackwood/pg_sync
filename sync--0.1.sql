@@ -3,6 +3,8 @@
 COMMENT ON EXTENSION sync
 	IS 'Extension PostgreSQL pour pouvoir synchroniser des tables entre plusieurs bases de données';
 
+
+
 CREATE TABLE IF NOT EXISTS sync.db_id
 (
 	db_id uuid NOT NULL PRIMARY KEY,
@@ -11,59 +13,31 @@ CREATE TABLE IF NOT EXISTS sync.db_id
 
 INSERT INTO sync.db_id VALUES (public.uuid_generate_v4());
 
-CREATE OR REPLACE FUNCTION sync.set_database_as_main()
-	RETURNS void
-	LANGUAGE sql
-AS
-$$
-	UPDATE sync.db_id SET is_main = TRUE;
-$$;
 
+
+CREATE OR REPLACE FUNCTION sync.set_database_as_main() RETURNS void LANGUAGE sql AS
+	$$ UPDATE sync.db_id SET is_main = TRUE; $$;
 COMMENT ON FUNCTION sync.set_database_as_main() IS 'Set the database as the main database';
 
-CREATE OR REPLACE FUNCTION sync.db_id()
-	RETURNS uuid
-	LANGUAGE sql
-	STABLE
-AS
-$$
-	SELECT db_id FROM sync.db_id;
-$$;
 
+
+CREATE OR REPLACE FUNCTION sync.db_id() RETURNS uuid LANGUAGE sql STABLE AS
+	$$ SELECT db_id FROM sync.db_id; $$;
 COMMENT ON FUNCTION sync.db_id() IS 'Returns database ID';
 
-CREATE OR REPLACE FUNCTION sync.is_main()
-	RETURNS boolean
-	LANGUAGE sql
-	STABLE
-AS
-$$
-	SELECT is_main FROM sync.db_id;
-$$;
-
+CREATE OR REPLACE FUNCTION sync.is_main() RETURNS boolean LANGUAGE sql STABLE AS
+	$$ SELECT is_main FROM sync.db_id; $$;
 COMMENT ON FUNCTION sync.is_main() IS 'Returns whether this database is the main database';
 
-CREATE OR REPLACE FUNCTION sync.is_server()
-	RETURNS boolean
-	LANGUAGE sql
-	STABLE
-AS
-$$
-	SELECT is_main FROM sync.db_id;
-$$;
-
+CREATE OR REPLACE FUNCTION sync.is_server() RETURNS boolean LANGUAGE sql STABLE AS
+	$$ SELECT is_main FROM sync.db_id; $$;
 COMMENT ON FUNCTION sync.is_server() IS 'Returns whether this database is the main database';
 
-CREATE OR REPLACE FUNCTION sync.is_replica()
-	RETURNS boolean
-	LANGUAGE sql
-	STABLE
-AS
-$$
-	SELECT NOT is_main FROM sync.db_id;
-$$;
-
+CREATE OR REPLACE FUNCTION sync.is_replica() RETURNS boolean LANGUAGE sql STABLE AS
+	$$ SELECT NOT is_main FROM sync.db_id; $$;
 COMMENT ON FUNCTION sync.is_replica() IS 'Returns whether this database is a replica';
+
+
 
 CREATE OR REPLACE FUNCTION sync.install_tracer(_table regclass)
 	RETURNS void
@@ -102,6 +76,8 @@ BEGIN
 	);
 END;
 $BODY$;
+
+
 
 CREATE OR REPLACE FUNCTION sync.trace_changes()
 	RETURNS trigger
