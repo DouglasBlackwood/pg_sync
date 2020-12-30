@@ -74,7 +74,7 @@ BEGIN
 	END;
 
 	BEGIN
-		EXECUTE FORMAT('ALTER TABLE %I ADD COLUMN pgs_synced_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT statement_timestamp();', _table);
+		EXECUTE FORMAT('ALTER TABLE %I ADD COLUMN pgs_synced_at TIMESTAMP WITH TIME ZONE DEFAULT statement_timestamp();', _table);
 	EXCEPTION WHEN duplicate_column THEN
 		RAISE NOTICE 'pgs_synced_at already exists';
 	END;
@@ -88,7 +88,8 @@ BEGIN
 			FOR EACH ROW
 			EXECUTE PROCEDURE sync.trace_changes()
 		$$,
-		_table);
+		_table
+	);
 END;
 $BODY$;
 
@@ -102,7 +103,7 @@ BEGIN
 		RETURN NULL;
 	ELSE
 		NEW.pgs_changed_at = statement_timestamp();
-		NEW.pgs_synced_at = statement_timestamp();
+		NEW.pgs_synced_at = NULL;
 		RETURN NEW;
 	END IF;
 END;
