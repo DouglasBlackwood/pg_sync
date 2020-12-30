@@ -6,10 +6,20 @@ COMMENT ON EXTENSION sync
 CREATE TABLE IF NOT EXISTS sync.db_id
 (
 	db_id uuid NOT NULL PRIMARY KEY,
-	main boolean NOT NULL DEFAULT FALSE
+	is_main boolean NOT NULL DEFAULT FALSE
 );
 
 INSERT INTO sync.db_id VALUES (public.uuid_generate_v4());
+
+CREATE OR REPLACE FUNCTION sync.set_database_as_main()
+	RETURNS void
+	LANGUAGE sql
+AS
+$$
+	UPDATE sync.db_id SET is_main = TRUE;
+$$;
+
+COMMENT ON FUNCTION sync.set_database_as_main() IS 'Set the database as the main database';
 
 CREATE OR REPLACE FUNCTION sync.db_id()
 	RETURNS uuid
@@ -28,7 +38,7 @@ CREATE OR REPLACE FUNCTION sync.is_main()
 	STABLE
 AS
 $$
-	SELECT main FROM sync.db_id;
+	SELECT is_main FROM sync.db_id;
 $$;
 
 COMMENT ON FUNCTION sync.is_main() IS 'Returns whether this database is the main database';
@@ -39,7 +49,7 @@ CREATE OR REPLACE FUNCTION sync.is_server()
 	STABLE
 AS
 $$
-	SELECT main FROM sync.db_id;
+	SELECT is_main FROM sync.db_id;
 $$;
 
 COMMENT ON FUNCTION sync.is_server() IS 'Returns whether this database is the main database';
@@ -50,7 +60,7 @@ CREATE OR REPLACE FUNCTION sync.is_replica()
 	STABLE
 AS
 $$
-	SELECT NOT main FROM sync.db_id;
+	SELECT NOT is_main FROM sync.db_id;
 $$;
 
 COMMENT ON FUNCTION sync.is_replica() IS 'Returns whether this database is a replica';
@@ -103,7 +113,11 @@ BEGIN
 		RETURN NULL;
 	ELSE
 		NEW.pgs_changed_at = statement_timestamp();
-		NEW.pgs_synced_at = NULL;
+		IF sync.is_main() THEN
+			NEW.pgs_synced_at = statement_timestamp();
+		ELSE
+			NEW.pgs_synced_at = NULL;
+		END IF;
 		RETURN NEW;
 	END IF;
 END;

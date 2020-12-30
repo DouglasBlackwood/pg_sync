@@ -21,6 +21,7 @@ SELECT has_trigger('people', 'pgs_trace_changes', 'trigger pgs_trace_changes is 
 -- Vérifie que la fonction peut être appelée deux fois
 SELECT sync.install_tracer('people');
 
+-- Tests INSERT
 INSERT INTO people (first_name, last_name)
 VALUES
 	('Mike', 'Tyson'),
@@ -34,9 +35,11 @@ SELECT ok(pgs_changed_at >= now(), 'wrong pgs_changed_at') FROM people LIMIT 1;
 SELECT ok(pgs_changed_at <= statement_timestamp(), 'wrong pgs_changed_at') FROM people LIMIT 1;
 SELECT ok(pgs_synced_at IS NULL, 'pgs_synced_at must be null') FROM people LIMIT 1;
 
+-- Tests DELETE
 DELETE FROM people;
 SELECT ok(COUNT(*) = 5) FROM people;
 
+-- Tests UPDATE
 UPDATE people SET pgs_changed_at = 'tomorrow', pgs_synced_at = 'tomorrow';
 SELECT ok(pgs_changed_at <= statement_timestamp(), 'wrong pgs_changed_at') FROM people LIMIT 1;
 SELECT ok(pgs_synced_at IS NULL, 'pgs_synced_at must be null') FROM people LIMIT 1;
