@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(18);
+SELECT plan(19);
 
 SET client_min_messages TO WARNING;
 
@@ -19,6 +19,7 @@ SELECT col_not_null('people', 'pgs_changed_at', 'column pgs_changed_at must have
 SELECT has_column('people', 'pgs_synced_at', 'column pgs_synced_at is missing');
 SELECT col_is_null('people', 'pgs_synced_at', 'column pgs_synced_at must have NOT NULL constraint');
 SELECT has_trigger('people', 'pgs_trace_changes', 'trigger pgs_trace_changes is missing');
+SELECT has_index('people', 'people_pgs_synced_at_idx', ARRAY['pgs_synced_at'], 'index people_pgs_synced_at_idx is missing');
 
 -- Vérifie que la fonction peut être appelée deux fois
 SELECT sync.install_tracer('people');

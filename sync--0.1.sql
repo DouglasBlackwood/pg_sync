@@ -57,12 +57,14 @@ CREATE OR REPLACE FUNCTION sync.install_tracer(_table regclass)
 	LANGUAGE plpgsql
 AS
 $BODY$
-DECLARE _primary_keys TEXT = (
+DECLARE
+	_primary_keys TEXT = (
 		SELECT string_agg(quote_literal(attname), ',')
 		FROM pg_index
 			JOIN pg_attribute ON  attrelid = indrelid AND attnum = ANY(indkey)
 		WHERE indrelid = _table AND indisprimary
 	);
+	_index_name TEXT = (select relname from pg_class where oid = _table) || '_pgs_synced_at_idx';
 BEGIN
 	IF _primary_keys IS NULL THEN
 		RAISE WARNING 'no primary key detected, delete operations will not be available';
@@ -97,6 +99,13 @@ BEGIN
 		$$,
 		_table,
 		_primary_keys
+	);
+
+	EXECUTE FORMAT('DROP INDEX IF EXISTS %I;', _index_name);
+	EXECUTE FORMAT(
+		'CREATE INDEX %I ON %I (pgs_synced_at DESC NULLS FIRST)',
+		_index_name,
+		_table
 	);
 END;
 $BODY$;
