@@ -10,8 +10,8 @@ Extension PostgreSQL pour pouvoir synchroniser des tables entre plusieurs bases 
 
 ## TODO
 
-- créer db_id
-- bloquer insert/delete sur db_id
 - créer stg_synchro (metadata)
-- créer fct trigger
-- créer colonnes sync
+- compléter stg_synchro lors du create extension
+- delete
+- index sur pg_synced_at ?
+- mode modification ? ne pas créer pg_modified_at

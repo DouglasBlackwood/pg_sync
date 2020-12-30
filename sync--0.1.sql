@@ -11,7 +11,20 @@ CREATE TABLE IF NOT EXISTS sync.db_id
 	is_main boolean NOT NULL DEFAULT FALSE
 );
 
-INSERT INTO sync.db_id VALUES (public.uuid_generate_v4());
+INSERT INTO sync.db_id(db_id) VALUES (public.uuid_generate_v4());
+
+CREATE OR REPLACE FUNCTION sync.db_id_locker() RETURNS trigger LANGUAGE plpgsql AS
+	$BODY$
+	BEGIN
+		RAISE EXCEPTION 'sync.db_id is locked!';
+	END;
+	$BODY$;
+
+CREATE TRIGGER db_id_lock
+	BEFORE INSERT OR DELETE
+	ON sync.db_id
+	FOR EACH ROW
+	EXECUTE PROCEDURE sync.db_id_locker();
 
 
 
@@ -87,14 +100,18 @@ $BODY$
 BEGIN
 	IF TG_OP = 'DELETE' THEN
 		RETURN NULL;
+
 	ELSE
 		NEW.pgs_changed_at = statement_timestamp();
+
 		IF sync.is_main() THEN
 			NEW.pgs_synced_at = statement_timestamp();
 		ELSE
 			NEW.pgs_synced_at = NULL;
 		END IF;
+
 		RETURN NEW;
+
 	END IF;
 END;
 $BODY$;
