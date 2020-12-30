@@ -1,6 +1,8 @@
 BEGIN;
 SELECT plan(2);
 
+SET client_min_messages TO WARNING;
+
 -- Définit la base de données comme la base principale
 SELECT sync.set_database_as_main();
 

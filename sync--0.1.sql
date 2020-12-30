@@ -64,7 +64,9 @@ DECLARE _primary_keys TEXT = (
 		WHERE indrelid = _table AND indisprimary
 	);
 BEGIN
-	SET client_min_messages TO WARNING;
+	IF _primary_keys IS NULL THEN
+		RAISE WARNING 'no primary key detected, delete operations will not be available';
+	END IF;
 
 	BEGIN
 		EXECUTE FORMAT('ALTER TABLE %I ADD COLUMN pgs_is_active BOOLEAN DEFAULT TRUE;', _table);

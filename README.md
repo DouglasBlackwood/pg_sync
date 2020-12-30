@@ -12,6 +12,6 @@ Extension PostgreSQL pour pouvoir synchroniser des tables entre plusieurs bases 
 
 - créer stg_synchro (metadata)
 - compléter stg_synchro lors du create extension
-- delete
 - index sur pg_synced_at ?
 - mode modification ? ne pas créer pg_modified_at
+- test delete multi primary key
