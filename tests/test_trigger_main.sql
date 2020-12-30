@@ -6,7 +6,7 @@ SELECT sync.set_database_as_main();
 
 CREATE TEMP TABLE people
 (
-	id INT GENERATED ALWAYS AS IDENTITY,
+	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	first_name TEXT,
 	last_name TEXT
 );

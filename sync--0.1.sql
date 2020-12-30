@@ -57,6 +57,12 @@ CREATE OR REPLACE FUNCTION sync.install_tracer(_table regclass)
 	LANGUAGE plpgsql
 AS
 $BODY$
+DECLARE _primary_keys TEXT = (
+		SELECT string_agg(quote_literal(attname), ',')
+		FROM pg_index
+			JOIN pg_attribute ON  attrelid = indrelid AND attnum = ANY(indkey)
+		WHERE indrelid = _table AND indisprimary
+	);
 BEGIN
 	SET client_min_messages TO WARNING;
 
@@ -85,9 +91,10 @@ BEGIN
 			BEFORE INSERT OR UPDATE OR DELETE
 			ON %I
 			FOR EACH ROW
-			EXECUTE PROCEDURE sync.trace_changes()
+			EXECUTE PROCEDURE sync.trace_changes(%s)
 		$$,
-		_table
+		_table,
+		_primary_keys
 	);
 END;
 $BODY$;
@@ -99,11 +106,29 @@ CREATE OR REPLACE FUNCTION sync.trace_changes()
 	LANGUAGE plpgsql
 AS
 $BODY$
+DECLARE _sql_delete text;
 BEGIN
 	IF TG_OP = 'DELETE' THEN
 		IF OLD.pgs_is_active IS NULL THEN
 			RETURN OLD;
+
 		ELSE
+			IF TG_NARGS = 0 THEN
+				RAISE EXCEPTION 'primary key is missing as trigger args';
+			END IF;
+
+			IF OLD.pgs_is_active THEN
+				_sql_delete := FORMAT(
+					'UPDATE %I.%I SET pgs_is_active = FALSE WHERE (%s) = (%s)',
+					TG_TABLE_SCHEMA,
+					TG_TABLE_NAME,
+					array_to_string(array(SELECT quote_ident(c) FROM UNNEST(TG_ARGV) t(c)), ','),
+					array_to_string(array(SELECT '$1.' || quote_ident(c) FROM UNNEST(TG_ARGV) t(c)), ',')
+				);
+
+				EXECUTE _sql_delete USING OLD;
+			END IF;
+
 			RETURN NULL;
 		END IF;
 
