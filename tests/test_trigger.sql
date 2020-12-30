@@ -43,6 +43,7 @@ SELECT ok(pgs_synced_at IS NULL, 'pgs_synced_at must be null') FROM people LIMIT
 -- Tests DELETE
 DELETE FROM people;
 SELECT ok(COUNT(*) = 5) FROM people;
+SELECT ok(NOT pgs_is_active) FROM people LIMIT 1;
 
 UPDATE people SET pgs_is_active = NULL;
 DELETE FROM people;
