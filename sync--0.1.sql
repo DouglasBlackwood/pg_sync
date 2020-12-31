@@ -89,7 +89,7 @@ SELECT sync.update_metadata();
 
 
 
-CREATE OR REPLACE FUNCTION sync.install_tracer(_table regclass, _download boolean default true, _upload boolean default true)
+CREATE OR REPLACE FUNCTION sync.install_tracer(_table REGCLASS, _download BOOLEAN DEFAULT TRUE, _upload BOOLEAN DEFAULT TRUE)
 	RETURNS void
 	LANGUAGE plpgsql
 AS
@@ -108,29 +108,29 @@ BEGIN
 	END IF;
 
 	BEGIN
-		EXECUTE FORMAT('ALTER TABLE %I ADD COLUMN pgs_is_active BOOLEAN DEFAULT TRUE;', _table);
+		EXECUTE FORMAT('ALTER TABLE %s ADD COLUMN pgs_is_active BOOLEAN DEFAULT TRUE;', _table);
 	EXCEPTION WHEN duplicate_column THEN
 		RAISE NOTICE 'pgs_is_active already exists';
 	END;
 
 	BEGIN
-		EXECUTE FORMAT('ALTER TABLE %I ADD COLUMN pgs_changed_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT statement_timestamp();', _table);
+		EXECUTE FORMAT('ALTER TABLE %s ADD COLUMN pgs_changed_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT statement_timestamp();', _table);
 	EXCEPTION WHEN duplicate_column THEN
 		RAISE NOTICE 'pgs_changed_at already exists';
 	END;
 
 	BEGIN
-		EXECUTE FORMAT('ALTER TABLE %I ADD COLUMN pgs_synced_at TIMESTAMP WITH TIME ZONE DEFAULT statement_timestamp();', _table);
+		EXECUTE FORMAT('ALTER TABLE %s ADD COLUMN pgs_synced_at TIMESTAMP WITH TIME ZONE DEFAULT statement_timestamp();', _table);
 	EXCEPTION WHEN duplicate_column THEN
 		RAISE NOTICE 'pgs_synced_at already exists';
 	END;
 
-	EXECUTE FORMAT('DROP TRIGGER IF EXISTS pgs_trace_changes ON %I;', _table);
+	EXECUTE FORMAT('DROP TRIGGER IF EXISTS pgs_trace_changes ON %s;', _table);
 	EXECUTE FORMAT(
 		$$
 			CREATE TRIGGER pgs_trace_changes
 			BEFORE INSERT OR UPDATE OR DELETE
-			ON %I
+			ON %s
 			FOR EACH ROW
 			EXECUTE PROCEDURE sync.trace_changes(%s)
 		$$,
@@ -140,7 +140,7 @@ BEGIN
 
 	EXECUTE FORMAT('DROP INDEX IF EXISTS %I;', _index_name);
 	EXECUTE FORMAT(
-		'CREATE INDEX %I ON %I (pgs_synced_at DESC NULLS FIRST)',
+		'CREATE INDEX %I ON %s (pgs_synced_at DESC NULLS FIRST)',
 		_index_name,
 		_table
 	);
@@ -148,8 +148,8 @@ BEGIN
 	EXECUTE FORMAT(
 		$$
 			INSERT INTO sync.metadata(table_id, synced_at, download, upload)
-			SELECT %L, max(pgs_synced_at), %L::boolean, %L::boolean
-			FROM %I
+			SELECT %L::regclass, max(pgs_synced_at), %L::boolean, %L::boolean
+			FROM %s
 			ON CONFLICT (table_id) DO UPDATE SET synced_at = EXCLUDED.synced_at;
 		$$,
 		_table,
