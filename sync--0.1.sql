@@ -61,6 +61,8 @@ CREATE TABLE IF NOT EXISTS sync.metadata
 	ordinality integer
 );
 
+SELECT pg_catalog.pg_extension_config_dump('sync.metadata', '');
+
 
 
 CREATE OR REPLACE FUNCTION sync.install_tracer(_table regclass)
