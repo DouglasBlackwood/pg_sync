@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(12);
+SELECT plan(14);
 
 SELECT has_table('sync', 'metadata', 'table metadata is missing');
 
@@ -28,9 +28,11 @@ CREATE TEMP TABLE people
 	last_name TEXT
 );
 
-SELECT sync.install_tracer('people');
+SELECT sync.install_tracer('people', _download:=FALSE, _upload:=FALSE);
 
 SELECT ok(COUNT(*) = 1) FROM sync.metadata;
+SELECT is(download, FALSE) FROM sync.metadata WHERE table_id = 'people'::regclass;
+SELECT is(upload, FALSE) FROM sync.metadata WHERE table_id = 'people'::regclass;
 
 SELECT * FROM finish();
 ROLLBACK;

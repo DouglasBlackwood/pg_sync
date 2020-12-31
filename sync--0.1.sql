@@ -89,7 +89,7 @@ SELECT sync.update_metadata();
 
 
 
-CREATE OR REPLACE FUNCTION sync.install_tracer(_table regclass)
+CREATE OR REPLACE FUNCTION sync.install_tracer(_table regclass, _download boolean default true, _upload boolean default true)
 	RETURNS void
 	LANGUAGE plpgsql
 AS
@@ -148,11 +148,13 @@ BEGIN
 	EXECUTE FORMAT(
 		$$
 			INSERT INTO sync.metadata(table_id, synced_at, download, upload)
-			SELECT %L, max(pgs_synced_at), TRUE, TRUE
+			SELECT %L, max(pgs_synced_at), %L::boolean, %L::boolean
 			FROM %I
 			ON CONFLICT (table_id) DO UPDATE SET synced_at = EXCLUDED.synced_at;
 		$$,
 		_table,
+		_download,
+		_upload,
 		_table
 	);
 END;
