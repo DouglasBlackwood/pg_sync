@@ -57,8 +57,7 @@ CREATE TABLE IF NOT EXISTS sync.metadata
 	table_id regclass primary key,
 	synced_at TIMESTAMP WITH TIME ZONE,
 	download boolean not null default true,
-	upload boolean not null default true,
-	ordinality integer
+	upload boolean not null default true
 );
 
 SELECT pg_catalog.pg_extension_config_dump('sync.metadata', '');

@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(13);
+SELECT plan(12);
 
 SELECT has_table('sync', 'metadata', 'table metadata is missing');
 
@@ -15,8 +15,6 @@ SELECT col_not_null('sync', 'metadata', 'download', 'column metadata.download mu
 
 SELECT has_column('sync', 'metadata', 'upload', 'column metadata.upload is missing');
 SELECT col_not_null('sync', 'metadata', 'upload', 'column metadata.upload must have NOT NULL constraint');
-
-SELECT has_column('sync', 'metadata', 'ordinality', 'column metadata.ordinality is missing');
 
 
 SELECT ok(COUNT(*) = 0) FROM sync.metadata;
