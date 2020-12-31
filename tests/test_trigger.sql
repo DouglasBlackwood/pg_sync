@@ -33,15 +33,15 @@ VALUES
 	('Hassan', 'Rohani'),
 	('Alex', 'Thomson');
 
-SELECT ok(pgs_is_active, 'pgs_is_active must be TRUE') FROM people LIMIT 1;
+SELECT is(pgs_is_active, TRUE, 'pgs_is_active must be TRUE') FROM people LIMIT 1;
 SELECT ok(pgs_changed_at >= now(), 'wrong pgs_changed_at') FROM people LIMIT 1;
 SELECT ok(pgs_changed_at <= statement_timestamp(), 'wrong pgs_changed_at') FROM people LIMIT 1;
-SELECT ok(pgs_synced_at IS NULL, 'pgs_synced_at must be null') FROM people LIMIT 1;
+SELECT is(pgs_synced_at, NULL, 'pgs_synced_at must be null') FROM people LIMIT 1;
 
 -- Tests UPDATE
 UPDATE people SET pgs_changed_at = 'tomorrow', pgs_synced_at = 'tomorrow';
 SELECT ok(pgs_changed_at <= statement_timestamp(), 'wrong pgs_changed_at') FROM people LIMIT 1;
-SELECT ok(pgs_synced_at IS NULL, 'pgs_synced_at must be null') FROM people LIMIT 1;
+SELECT is(pgs_synced_at, NULL, 'pgs_synced_at must be null') FROM people LIMIT 1;
 
 -- Tests DELETE
 DELETE FROM people;

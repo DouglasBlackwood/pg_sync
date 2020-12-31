@@ -62,7 +62,11 @@ CREATE TABLE IF NOT EXISTS sync.metadata
 
 SELECT pg_catalog.pg_extension_config_dump('sync.metadata', '');
 
-DO $update_meta$
+CREATE OR REPLACE FUNCTION sync.update_metadata()
+	RETURNS void
+	LANGUAGE plpgsql
+AS
+$BODY$
 DECLARE
 	_record record;
 BEGIN
@@ -72,14 +76,16 @@ BEGIN
 			$$
 				UPDATE sync.metadata
 				SET synced_at = (SELECT MAX(pgs_synced_at) FROM %I)
-				WHERE table_id = %L;
+				WHERE table_id = %L::regclass;
 			$$,
 			_record.table_id,
 			_record.table_id
 		);
 	END LOOP;
 END;
-$update_meta$;
+$BODY$;
+
+SELECT sync.update_metadata();
 
 
 
