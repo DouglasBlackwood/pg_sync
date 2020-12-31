@@ -52,6 +52,17 @@ COMMENT ON FUNCTION sync.is_replica() IS 'Returns whether this database is a rep
 
 
 
+CREATE TABLE IF NOT EXISTS sync.metadata
+(
+	table_id regclass primary key,
+	synced_at TIMESTAMP WITH TIME ZONE,
+	download boolean not null default true,
+	upload boolean not null default true,
+	ordinality integer
+);
+
+
+
 CREATE OR REPLACE FUNCTION sync.install_tracer(_table regclass)
 	RETURNS void
 	LANGUAGE plpgsql
