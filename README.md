@@ -10,5 +10,4 @@ Extension PostgreSQL pour pouvoir synchroniser des tables entre plusieurs bases 
 
 ## TODO
 
-- test delete multi primary key
 - si la pkey change, le trigger devient invalide
