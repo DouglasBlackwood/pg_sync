@@ -62,12 +62,12 @@ CREATE TABLE IF NOT EXISTS sync.metadata
 
 SELECT pg_catalog.pg_extension_config_dump('sync.metadata', '');
 
-DO $$
+DO $update_meta$
 DECLARE
 	_record record;
 BEGIN
-	for _record in (select table_id from sync.metadata)
-	loop
+	FOR _record IN (SELECT table_id FROM sync.metadata)
+	LOOP
 		EXECUTE FORMAT(
 			$$
 				UPDATE sync.metadata
@@ -76,10 +76,10 @@ BEGIN
 			$$,
 			_record.table_id,
 			_record.table_id
-		)
-	end loop;
+		);
+	END LOOP;
 END;
-$$;
+$update_meta$;
 
 
 
