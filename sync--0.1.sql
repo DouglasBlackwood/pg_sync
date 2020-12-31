@@ -62,6 +62,25 @@ CREATE TABLE IF NOT EXISTS sync.metadata
 
 SELECT pg_catalog.pg_extension_config_dump('sync.metadata', '');
 
+DO $$
+DECLARE
+	_record record;
+BEGIN
+	for _record in (select table_id from sync.metadata)
+	loop
+		EXECUTE FORMAT(
+			$$
+				UPDATE sync.metadata
+				SET synced_at = (SELECT MAX(pgs_synced_at) FROM %I)
+				WHERE table_id = %L;
+			$$,
+			_record.table_id,
+			_record.table_id
+		)
+	end loop;
+END;
+$$;
+
 
 
 CREATE OR REPLACE FUNCTION sync.install_tracer(_table regclass)
