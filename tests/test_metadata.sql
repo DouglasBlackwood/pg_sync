@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(11);
+SELECT plan(13);
 
 SELECT has_table('sync', 'metadata', 'table metadata is missing');
 
@@ -17,6 +17,22 @@ SELECT has_column('sync', 'metadata', 'upload', 'column metadata.upload is missi
 SELECT col_not_null('sync', 'metadata', 'upload', 'column metadata.upload must have NOT NULL constraint');
 
 SELECT has_column('sync', 'metadata', 'ordinality', 'column metadata.ordinality is missing');
+
+
+SELECT ok(COUNT(*) = 0) FROM sync.metadata;
+
+SET client_min_messages TO WARNING;
+
+CREATE TEMP TABLE people
+(
+	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	first_name TEXT,
+	last_name TEXT
+);
+
+SELECT sync.install_tracer('people');
+
+SELECT ok(COUNT(*) = 1) FROM sync.metadata;
 
 SELECT * FROM finish();
 ROLLBACK;

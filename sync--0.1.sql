@@ -118,6 +118,17 @@ BEGIN
 		_index_name,
 		_table
 	);
+
+	EXECUTE FORMAT(
+		$$
+			INSERT INTO sync.metadata(table_id, synced_at, download, upload)
+			SELECT %L, max(pgs_synced_at), TRUE, TRUE
+			FROM %I
+			ON CONFLICT (table_id) DO UPDATE SET synced_at = EXCLUDED.synced_at;
+		$$,
+		_table,
+		_table
+	);
 END;
 $BODY$;
 
