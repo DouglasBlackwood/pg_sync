@@ -210,3 +210,26 @@ BEGIN
 	END IF;
 END;
 $BODY$;
+
+CREATE OR REPLACE FUNCTION sync.uninstall_tracer(_table REGCLASS)
+	RETURNS void
+	LANGUAGE plpgsql
+AS
+$BODY$
+DECLARE
+	_index_name TEXT = (select relname from pg_class where oid = _table) || '_pgs_synced_at_idx';
+BEGIN
+	EXECUTE FORMAT('ALTER TABLE %s DROP COLUMN IF EXISTS pgs_is_active;', _table);
+	EXECUTE FORMAT('ALTER TABLE %s DROP COLUMN IF EXISTS pgs_changed_at;', _table);
+	EXECUTE FORMAT('ALTER TABLE %s DROP COLUMN IF EXISTS pgs_synced_at;', _table);
+
+	EXECUTE FORMAT('DROP TRIGGER IF EXISTS pgs_trace_changes ON %s;', _table);
+
+	EXECUTE FORMAT('DROP INDEX IF EXISTS %I;', _index_name);
+
+	EXECUTE FORMAT(
+		'DELETE FROM sync.metadata WHERE table_id = %L::regclass;',
+		_table
+	);
+END;
+$BODY$;
