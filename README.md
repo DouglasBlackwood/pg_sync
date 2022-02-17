@@ -9,4 +9,3 @@ Extension PostgreSQL pour pouvoir synchroniser des tables entre plusieurs bases 
 ## TODO
 
 - si la pkey change, le trigger devient invalide
-- utiliser faker dans les tests
