@@ -3,6 +3,8 @@ SELECT plan(19);
 
 SET client_min_messages TO WARNING;
 
+SELECT faker.faker('fr_FR');
+
 CREATE TEMP TABLE people
 (
 	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -27,11 +29,11 @@ SELECT sync.install_tracer('people');
 -- Tests INSERT
 INSERT INTO people (first_name, last_name)
 VALUES
-	('Mike', 'Tyson'),
-	('Michel', 'Zecler'),
-	('Diego', 'Maradona'),
-	('Hassan', 'Rohani'),
-	('Alex', 'Thomson');
+	(faker.first_name(), faker.last_name()),
+	(faker.first_name(), faker.last_name()),
+	(faker.first_name(), faker.last_name()),
+	(faker.first_name(), faker.last_name()),
+	(faker.first_name(), faker.last_name());
 
 SELECT is(pgs_is_active, TRUE, 'pgs_is_active must be TRUE') FROM people LIMIT 1;
 SELECT ok(pgs_changed_at >= now(), 'wrong pgs_changed_at') FROM people LIMIT 1;

@@ -3,6 +3,8 @@ SELECT plan(2);
 
 SET client_min_messages TO WARNING;
 
+SELECT faker.faker('fr_FR');
+
 -- Définit la base de données comme la base principale
 SELECT sync.set_database_as_main();
 
@@ -18,11 +20,11 @@ SELECT sync.install_tracer('people');
 
 INSERT INTO people (first_name, last_name)
 VALUES
-	('Mike', 'Tyson'),
-	('Michel', 'Zecler'),
-	('Diego', 'Maradona'),
-	('Hassan', 'Rohani'),
-	('Alex', 'Thomson');
+	(faker.first_name(), faker.last_name()),
+	(faker.first_name(), faker.last_name()),
+	(faker.first_name(), faker.last_name()),
+	(faker.first_name(), faker.last_name()),
+	(faker.first_name(), faker.last_name());
 
 -- Tests UPDATE
 UPDATE people SET pgs_changed_at = 'tomorrow', pgs_synced_at = 'tomorrow';

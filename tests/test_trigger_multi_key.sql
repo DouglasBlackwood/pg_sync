@@ -3,6 +3,8 @@ SELECT plan(5);
 
 SET client_min_messages TO WARNING;
 
+SELECT faker.faker('fr_FR');
+
 CREATE TEMP TABLE people
 (
 	id1 INT,
@@ -21,11 +23,11 @@ SELECT sync.install_tracer('people');
 -- Tests INSERT
 INSERT INTO people (id1, id2, first_name, last_name)
 VALUES
-	(1, 1, 'Mike', 'Tyson'),
-	(1, 2, 'Michel', 'Zecler'),
-	(1, 3, 'Diego', 'Maradona'),
-	(1, 4, 'Hassan', 'Rohani'),
-	(1, 5, 'Alex', 'Thomson');
+	(1, 1, faker.first_name(), faker.last_name()),
+	(1, 2, faker.first_name(), faker.last_name()),
+	(1, 3, faker.first_name(), faker.last_name()),
+	(1, 4, faker.first_name(), faker.last_name()),
+	(1, 5, faker.first_name(), faker.last_name());
 
 -- Tests DELETE
 DELETE FROM people;

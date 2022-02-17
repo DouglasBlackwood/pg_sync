@@ -3,6 +3,8 @@ SELECT plan(5);
 
 SET client_min_messages TO WARNING;
 
+SELECT faker.faker('fr_FR');
+
 TRUNCATE sync.metadata;
 SELECT sync.set_database_as_main();
 
@@ -20,11 +22,11 @@ SELECT is(synced_at, NULL, 'synced_at is not null') FROM sync.metadata WHERE tab
 
 INSERT INTO people (first_name, last_name)
 VALUES
-	('Mike', 'Tyson'),
-	('Michel', 'Zecler'),
-	('Diego', 'Maradona'),
-	('Hassan', 'Rohani'),
-	('Alex', 'Thomson');
+	(faker.first_name(), faker.last_name()),
+	(faker.first_name(), faker.last_name()),
+	(faker.first_name(), faker.last_name()),
+	(faker.first_name(), faker.last_name()),
+	(faker.first_name(), faker.last_name());
 
 SELECT ok(COUNT(*) = 5, 'test table is empty') FROM people;
 SELECT isnt(max(pgs_synced_at), NULL, 'pgs_synced_at is empty') FROM people;
