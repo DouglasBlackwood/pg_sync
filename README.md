@@ -9,3 +9,4 @@ Extension PostgreSQL pour pouvoir synchroniser des tables entre plusieurs bases 
 ## TODO
 
 - si la pkey change, le trigger devient invalide
+- uninstall tracer

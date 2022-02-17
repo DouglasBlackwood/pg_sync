@@ -150,7 +150,10 @@ BEGIN
 			INSERT INTO sync.metadata(table_id, synced_at, download, upload)
 			SELECT %L::regclass, max(pgs_synced_at), %L::boolean, %L::boolean
 			FROM %s
-			ON CONFLICT (table_id) DO UPDATE SET synced_at = EXCLUDED.synced_at;
+			ON CONFLICT (table_id) DO UPDATE
+				SET synced_at = EXCLUDED.synced_at,
+					download = EXCLUDED.download,
+					upload = EXCLUDED.upload;
 		$$,
 		_table,
 		_download,
