@@ -4,10 +4,6 @@ SELECT plan(1);
 SET client_min_messages TO WARNING;
 SET search_path TO public;
 
-DROP SCHEMA IF EXISTS hide_schema;
-
-CREATE SCHEMA hide_schema;
-
 CREATE TABLE hide_schema.hide_table
 (
 	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

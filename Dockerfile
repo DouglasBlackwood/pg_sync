@@ -26,6 +26,7 @@ RUN mv /sync.control $(pg_config --sharedir)/extension/sync.control
 COPY ./sync--0.1.sql /sync--0.1.sql
 RUN mv /sync--0.1.sql $(pg_config --sharedir)/extension/sync--0.1.sql
 
-# install extensions
+# install extensions and create user
 RUN mkdir -p /docker-entrypoint-initdb.d
-COPY ./initdb-pgtap.sql /docker-entrypoint-initdb.d/pgtap.sql
+COPY ./initdb-extension.sql /docker-entrypoint-initdb.d/extension.sql
+COPY ./initdb-user.sql /docker-entrypoint-initdb.d/user.sql
