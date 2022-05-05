@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS sync.db_id
 	is_main boolean NOT NULL DEFAULT FALSE
 );
 
-INSERT INTO sync.db_id(db_id) VALUES (public.uuid_generate_v4());
+INSERT INTO sync.db_id(db_id) VALUES (public.gen_random_uuid());
 
 CREATE OR REPLACE FUNCTION sync.db_id_locker() RETURNS trigger LANGUAGE plpgsql AS
 	$BODY$
